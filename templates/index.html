@@ -4,148 +4,90 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Digital Signature System</title>
-    <style>
-      body {
-        font-family: Arial, sans-serif;
-        margin: 20px;
-        padding: 0;
-        background-color: #f4f4f4;
-      }
-      h1, h2 {
-        color: #333;
-      }
-      form {
-        margin-bottom: 20px;
-      }
-      textarea {
-        width: 100%;
-        height: 100px;
-        margin-bottom: 10px;
-        padding: 10px;
-        border: 1px solid #ccc;
-        border-radius: 4px;
-      }
-      button {
-        padding: 10px 20px;
-        background-color: #007bff;
-        color: white;
-        border: none;
-        border-radius: 4px;
-        cursor: pointer;
-      }
-      button:hover {
-        background-color: #0056b3;
-      }
-      pre {
-        background-color: #e9ecef;
-        padding: 10px;
-        border-radius: 4px;
-      }
-      .container {
-        max-width: 800px;
-        margin: auto;
-        background: white;
-        padding: 20px;
-        border-radius: 8px;
-        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-      }
-      .theory {
-        background-color: #e9ecef;
-        padding: 10px;
-        border-radius: 4px;
-        margin-bottom: 20px;
-      }
-    </style>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/static/styles.css" />
   </head>
   <body>
     <div class="container">
-      <h1>Digital Signature System</h1>
-      <div class="theory">
-        <h2>How Digital Signatures Work</h2>
+      <header class="header">
+        <h1>
+          <i class="fas fa-signature"></i>Digital Signature System
+        </h1>
+      </header>
+
+      <div class="card theory">
+        <h2><i class="fas fa-info-circle"></i> How Digital Signatures Work</h2>
         <p>
-          Digital signatures use public key cryptography to ensure the authenticity and integrity of a message. The sender signs the message with their private key, and the recipient verifies the signature using the sender's public key.
+          Digital signatures use public key cryptography to ensure the
+          authenticity and integrity of a message. The sender signs the message
+          with their private key, and the recipient verifies the signature using
+          the sender's public key.
         </p>
         <p>
-          This project allows users to sign a document and verify the signature. The public key is displayed on the page, and users can sign a message by submitting the form. The signed message can then be verified by uploading the signature file and the original message.
+          This project allows users to sign a document and verify the signature.
+          The public key is displayed on the page, and users can sign a message
+          by submitting the form. The signed message can then be verified by
+          uploading the signature file and the original message.
         </p>
         <p>
-          This project was created by Yugal Burde, Shrajal Gupta, and Yash Kumar Singh.
+          This project was created by Yugal Burde. You can find the source code
+          on <a href="gitnub.com/yugal1107/sign-verify">GitHub</a>.
         </p>
       </div>
-      <h2>Public Key</h2>
-      <pre id="publicKey"></pre>
-      <h2>Sign a Document</h2>
-      <form id="signForm">
-        <textarea
-          name="message"
-          placeholder="Enter your message"
-          required
-        ></textarea>
-        <button type="submit">Sign</button>
-      </form>
-      <p id="signResult"></p>
-      <h2>Verify a Signature</h2>
-      <form id="verifyForm" enctype="multipart/form-data">
-        <textarea
-          name="message"
-          placeholder="Enter your message"
-          required
-        ></textarea>
-        <input type="file" name="signature" required />
-        <textarea
-          name="publicKey"
-          placeholder="Enter the public key"
-          required
-        ></textarea>
-        <button type="submit">Verify</button>
-      </form>
-      <p id="verifyResult"></p>
+
+      <div class="card">
+        <h2><i class="fas fa-key"></i> Public Key</h2>
+        <pre id="publicKey" class="key-display"></pre>
+      </div>
+
+      <div class="card">
+        <h2><i class="fas fa-file-signature"></i> Sign a Document</h2>
+        <form id="signForm" class="form-group">
+          <textarea
+            name="message"
+            placeholder="Enter your message to sign..."
+            required
+          ></textarea>
+          <button type="submit" class="btn primary-btn">
+            <i class="fas fa-pen-nib"></i> Sign Document
+          </button>
+        </form>
+        <p id="signResult" class="result-message"></p>
+      </div>
+
+      <div class="card">
+        <h2><i class="fas fa-check-circle"></i> Verify a Signature</h2>
+        <form id="verifyForm" class="form-group" enctype="multipart/form-data">
+          <textarea
+            name="message"
+            placeholder="Enter the original message..."
+            required
+          ></textarea>
+          <div class="file-input-container">
+            <input type="file" name="signature" id="signature" required />
+            <label for="signature" class="file-label">
+              <i class="fas fa-upload"></i> Choose Signature File
+            </label>
+          </div>
+          <textarea
+            name="publicKey"
+            placeholder="Enter the public key..."
+            required
+          ></textarea>
+          <button type="submit" class="btn secondary-btn">
+            <i class="fas fa-shield-alt"></i> Verify Signature
+          </button>
+        </form>
+        <p id="verifyResult" class="result-message"></p>
+      </div>
     </div>
-    <script>
-      // Fetch and display the public key
-      fetch("/public_key")
-        .then((response) => response.text())
-        .then((publicKey) => {
-          document.getElementById("publicKey").innerText = publicKey;
-        })
-        .catch((error) => {
-          console.error("Error fetching public key:", error);
-        });
-
-      document
-        .getElementById("signForm")
-        .addEventListener("submit", function (e) {
-          e.preventDefault();
-          var formData = new FormData(this);
-          fetch("/sign", {
-            method: "POST",
-            body: formData,
-          })
-            .then((response) => response.blob())
-            .then((blob) => {
-              var url = window.URL.createObjectURL(blob);
-              var a = document.createElement("a");
-              a.href = url;
-              a.download = "signature.sig";
-              document.body.appendChild(a);
-              a.click();
-              a.remove();
-            })
-            .catch((error) => {
-              console.error("Error:", error);
-            });
-        });
-
-      document.getElementById("verifyForm").onsubmit = async function (event) {
-        event.preventDefault();
-        const formData = new FormData(this);
-        const response = await fetch("/verify", {
-          method: "POST",
-          body: formData,
-        });
-        const result = await response.json();
-        document.getElementById("verifyResult").innerText = result.message;
-      };
-    </script>
+    <script src="/static/scripts.js"></script>
   </body>
 </html>
